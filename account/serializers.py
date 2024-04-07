@@ -2,14 +2,10 @@ from rest_framework import serializers
 from .models import CustomUser as User
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     class Meta:
         model = User
-        fields = ['url', 'username', 'id', 'email']
-        extra_kwargs = {
-            'password': {
-                'write_only': True
-            }
-        }
+        fields = ['url', 'username', 'id', 'email', 'password']
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -26,6 +22,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        if self.context['request'].user != instance and not self.context['request'].user.is_admin:
+        if self.context['request'].user != instance:
             representation['email'] = None
         return representation
