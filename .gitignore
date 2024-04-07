@@ -14,3 +14,4 @@ __pycache__/
 
 # Database
 db.sqlite3
+**/migrations/0001_initial.py
