@@ -1,0 +1,16 @@
+# Django project directories
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+.env
+
+# Static files
+/staticfiles/
+
+# Media files
+/media/
+
+# Database
+db.sqlite3
