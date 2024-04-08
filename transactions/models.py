@@ -11,6 +11,10 @@ class Account(models.Model):
     balance = models.FloatField(default=0)
     description = models.CharField(max_length=255, null=True, blank=True)
 
+    class Meta:
+        ordering = ['name']
+        unique_together = ('user', 'name')
+
     def __str__(self):
         return self.name
 
@@ -19,6 +23,10 @@ class Category(models.Model):
     name = models.CharField(max_length=32)
     description = models.CharField(max_length=255, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='categories')
+
+    class Meta:
+        ordering = ['name']
+        unique_together = ('user', 'name')
 
     def __str__(self):
         return self.name
@@ -38,14 +46,17 @@ class Transaction(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     title = models.CharField(max_length=32, null=True, blank=True)
 
+    class Meta:
+        ordering = ['-datetime']
+
     def __str__(self):
         return str(self.amount)
 
     def save(self, *args, **kwargs):
         if self.type == 'income':
-            if not self.category:
-                raise ValidationError('Category is required for income transactions')
             self.account.balance += self.amount
+            self.category = None
         elif self.type == 'expense':
             self.account.balance -= self.amount
+        self.account.save()
         super().save(*args, **kwargs)
