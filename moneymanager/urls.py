@@ -23,7 +23,7 @@ from transactions.views import AccountViewSet, CategoryViewSet, TransactionViewS
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
+router.register(r'users', UserViewSet, basename='users')
 router.register(r'accounts', AccountViewSet, basename='accounts')
 router.register(r'categories', CategoryViewSet, basename='categories')
 router.register(r'transactions', TransactionViewSet, basename='transactions')
