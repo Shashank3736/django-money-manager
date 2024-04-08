@@ -7,3 +7,9 @@ class IsOwnerOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         return obj.id == request.user.id
+    
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            return request.user.is_anonymous
+        
+        return True
