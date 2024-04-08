@@ -31,12 +31,19 @@ class TransactionSerializer(serializers.ModelSerializer):
             self.fields['category'].choices = Category.objects.filter(user=request.user).values_list('id', 'name')
             self.fields['account'].choices = Account.objects.filter(user=request.user).values_list('id', 'name')
     
-    def create(self, validated_data):
-        if validated_data.get('category', None) and validated_data['category']['name']:
-            validated_data['category'] = Category.objects.get(id=validated_data['category']['name'])
+    def validate(self, data):
+        if data.get('category', None) and data['category']['name']:
+            data['category'] = Category.objects.get(id=data['category']['name'])
         else:
-            if validated_data['type'] == 'expense':
+            if data['type'] == 'expense':
                 raise ValidationError({'category': 'Category is required for expense transactions'})
-        if validated_data['account']:
-            validated_data['account'] = Account.objects.get(id=validated_data['account']['name'])
+        if data['account']:
+            data['account'] = Account.objects.get(id=data['account']['name'])
+        
+        if data['amount'] < 0:
+            raise ValidationError({'amount': 'Amount cannot be negative'})
+        
+        return data
+    
+    def create(self, validated_data):
         return Transaction.objects.create(**validated_data)
