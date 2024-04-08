@@ -24,7 +24,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     category = CustomChoiceField(choices=[], allow_blank=True, allow_null=True)
     user = serializers.ReadOnlyField(source='user.username')
     account = CustomChoiceField(choices=[])
-    datetime = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', default=timezone.now())
+    datetime = serializers.DateTimeField(default=timezone.now())
 
     class Meta:
         model = Transaction
