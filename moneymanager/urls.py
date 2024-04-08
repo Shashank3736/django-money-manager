@@ -19,10 +19,14 @@ from django.urls import include, path
 from rest_framework import routers
 
 from account.views import UserViewSet
+from transactions.views import AccountViewSet, CategoryViewSet, TransactionViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
+router.register(r'accounts', AccountViewSet, basename='accounts')
+router.register(r'categories', CategoryViewSet, basename='categories')
+router.register(r'transactions', TransactionViewSet, basename='transactions')
 
 urlpatterns = [
     path('', include(router.urls)),
