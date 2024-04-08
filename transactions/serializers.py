@@ -33,7 +33,6 @@ class TransactionSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         if validated_data.get('category', None) and validated_data['category']['name']:
-            print(validated_data['category'])
             validated_data['category'] = Category.objects.get(id=validated_data['category']['name'])
         else:
             if validated_data['type'] == 'expense':
