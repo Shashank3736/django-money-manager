@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from .models import CustomUser as User
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     class Meta:
         model = User
-        fields = ['url', 'username', 'id', 'email', 'password']
+        fields = ['username', 'id', 'email', 'password']
+        
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
