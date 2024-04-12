@@ -1,4 +1,4 @@
-from typing import Collection
+from typing import Collection, Iterable
 from django.db import models
 from account.models import CustomUser as User
 from transactions.models import Category
@@ -19,10 +19,10 @@ class Budgets(models.Model):
     def __str__(self) -> str:
         return self.name
     
-    def validate_constraints(self, exclude: Collection[str] | None = ...) -> None:
-        if self.category.user != self.user:
+    def save(self, force_insert: bool = ..., force_update: bool = ..., using: str | None = ..., update_fields: Iterable[str] | None = ...) -> None:
+        if self.category and self.category.user != self.user:
             raise ValidationError("User do not own the category.")
         
         if self.amount < 0:
             raise ValidationError("Amount need to be greater than zero.")
-        return super().validate_constraints(exclude)
+        return super().save(force_insert, force_update, using, update_fields)
