@@ -18,7 +18,10 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class CustomChoiceField(serializers.ChoiceField):
     def to_representation(self, obj):
-        return obj.name
+        return {
+            "id": obj.pk,
+            "name": str(obj)
+        }
     
 class TransactionSerializer(serializers.ModelSerializer):
     category = CustomChoiceField(choices=[], allow_blank=True, allow_null=True)
