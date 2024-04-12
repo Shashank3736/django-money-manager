@@ -20,6 +20,7 @@ from rest_framework import routers
 
 from account.views import UserViewSet
 from transactions.views import AccountViewSet, CategoryViewSet, TransactionViewSet
+from budget.views import BudgetViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -27,6 +28,7 @@ router.register(r'users', UserViewSet, basename='users')
 router.register(r'accounts', AccountViewSet, basename='accounts')
 router.register(r'categories', CategoryViewSet, basename='categories')
 router.register(r'transactions', TransactionViewSet, basename='transactions')
+router.register(r'budgets', BudgetViewSet, basename='budgets')
 
 urlpatterns = [
     path('', include(router.urls)),
