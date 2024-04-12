@@ -1,0 +1,6 @@
+{
+    "workbench.editor.customLabels.patterns": {
+        "**/*.py": "${dirname} ${filename}"
+    }, 
+    "workbench.editor.customLabels.enabled": true,
+}
