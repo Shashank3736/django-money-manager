@@ -10,7 +10,7 @@ class Budgets(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="budgets")
     name = models.CharField(max_length=32)
     amount = models.IntegerField()
-    category = models.OneToOneField(Category, on_delete=models.CASCADE, related_name="budget")
+    category = models.OneToOneField(Category, on_delete=models.CASCADE, related_name="budget", null=True)
 
     class Meta:
         ordering = ['name']
