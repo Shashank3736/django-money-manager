@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'knox',
     'account',
     'transactions',
     'budget',
@@ -132,7 +133,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'knox.auth.TokenAuthentication',
     ],
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
@@ -145,3 +147,10 @@ REST_FRAMEWORK = {
 }
 # Custom User Model
 AUTH_USER_MODEL = 'account.CustomUser'
+
+# Rest KNOX
+REST_KNOX = {
+    'TOKEN_TTL': timedelta(days=3),
+    'TOKEN_LIMIT_PER_USER': 3,
+    'AUTO_REFRESH': True
+}
