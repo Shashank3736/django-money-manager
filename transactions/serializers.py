@@ -8,13 +8,25 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = '__all__'        
+        fields = '__all__'
+
+    def create(self, validated_data):
+        try:
+            Account.objects.create(**validated_data)
+        except Exception as e:
+            raise ValidationError(e)
 
 class CategorySerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     class Meta:
         model = Category
         fields = '__all__'
+
+    def create(self, validated_data):
+        try:
+            Category.objects.create(**validated_data)
+        except Exception as e:
+            raise ValidationError(e)
 
 class CustomChoiceField(serializers.ChoiceField):
     def to_representation(self, obj):
@@ -62,4 +74,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         return data
     
     def create(self, validated_data):
-        return Transaction.objects.create(**validated_data)
+        try:
+            Transaction.objects.create(**validated_data)
+        except Exception as e:
+            raise ValidationError(e)
