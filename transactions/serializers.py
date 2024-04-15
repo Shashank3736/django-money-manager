@@ -12,7 +12,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
-            Account.objects.create(**validated_data)
+            return Account.objects.create(**validated_data)
         except Exception as e:
             raise ValidationError(e)
 
@@ -24,7 +24,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
-            Category.objects.create(**validated_data)
+            return Category.objects.create(**validated_data)
         except Exception as e:
             raise ValidationError(e)
 
@@ -75,6 +75,6 @@ class TransactionSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         try:
-            Transaction.objects.create(**validated_data)
+            return Transaction.objects.create(**validated_data)
         except Exception as e:
             raise ValidationError(e)
