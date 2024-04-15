@@ -16,4 +16,7 @@ class BudgetSerializer(serializers.ModelSerializer):
         
         if validated_data['amount'] < 0:
             raise ValidationError("Amount need to be greater than zero.")
-        return super().create(validated_data)
+        try:
+            return Budgets.objects.create(**validated_data)
+        except Exception as e:
+            raise ValidationError(e)
