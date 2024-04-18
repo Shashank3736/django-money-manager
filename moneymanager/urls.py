@@ -25,10 +25,10 @@ from userprofile.views import ProfileViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet, basename='users')
-router.register(r'accounts', AccountViewSet, basename='accounts')
-router.register(r'categories', CategoryViewSet, basename='categories')
-router.register(r'transactions', TransactionViewSet, basename='transactions')
+router.register(r'users', UserViewSet, basename='customuser')
+router.register(r'accounts', AccountViewSet, basename='account')
+router.register(r'categories', CategoryViewSet, basename='category')
+router.register(r'transactions', TransactionViewSet, basename='transaction')
 router.register(r'budgets', BudgetViewSet, basename='budgets')
 router.register(r'profile', ProfileViewSet, basename='profile')
 
