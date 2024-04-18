@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = str(os.getenv('DEBUG')) == '1'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
@@ -84,25 +84,26 @@ WSGI_APPLICATION = 'moneymanager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# PostgreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': str(os.getenv("DATABASE_NAME")),
-        'USER': str(os.getenv("DATABASE_USER")),
-        'PASSWORD': str(os.getenv("DATABASE_PASSWORD")),
-        'HOST': str(os.getenv("DATABASE_HOST")),
-        'PORT': str(os.getenv("DATABASE_PORT")),
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
-##########
+else:
+    # PostgreSQL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': str(os.getenv("DATABASE_NAME")),
+            'USER': str(os.getenv("DATABASE_USER")),
+            'PASSWORD': str(os.getenv("DATABASE_PASSWORD")),
+            'HOST': str(os.getenv("DATABASE_HOST")),
+            'PORT': str(os.getenv("DATABASE_PORT")),
+        }
+    }
+    ##########
 
 
 # Password validation
