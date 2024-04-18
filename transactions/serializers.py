@@ -1,32 +1,21 @@
 from rest_framework import serializers
+from moneymanager.serializers import CustomModelSerializer
 from .models import Account, Transaction, Category
 from rest_framework.exceptions import ValidationError
 from django.utils import timezone
 
-class AccountSerializer(serializers.ModelSerializer):
+class AccountSerializer(CustomModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
         model = Account
         fields = '__all__'
 
-    def create(self, validated_data):
-        try:
-            return Account.objects.create(**validated_data)
-        except Exception as e:
-            raise ValidationError(e)
-
-class CategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(CustomModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     class Meta:
         model = Category
         fields = '__all__'
-
-    def create(self, validated_data):
-        try:
-            return Category.objects.create(**validated_data)
-        except Exception as e:
-            raise ValidationError(e)
 
 class CustomChoiceField(serializers.ChoiceField):
     def to_representation(self, obj):
@@ -35,7 +24,7 @@ class CustomChoiceField(serializers.ChoiceField):
             "name": str(obj)
         }
     
-class TransactionSerializer(serializers.ModelSerializer):
+class TransactionSerializer(CustomModelSerializer):
     category = CustomChoiceField(choices=[], allow_blank=True, allow_null=True)
     user = serializers.ReadOnlyField(source='user.username')
     account = CustomChoiceField(choices=[])
@@ -72,9 +61,4 @@ class TransactionSerializer(serializers.ModelSerializer):
             raise ValidationError({'account': 'Account does not belong to user'})
         
         return data
-    
-    def create(self, validated_data):
-        try:
-            return Transaction.objects.create(**validated_data)
-        except Exception as e:
-            raise ValidationError(e)
+        
