@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
 from account.models import CustomUser as User
-import uuid, os
+import os
 
 # Create your models here.
 class Profile(models.Model):
