@@ -2,6 +2,9 @@ import uuid
 from django.db import models
 from account.models import CustomUser as User
 from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import receiver
+import os
 
 # Create your models here.
 class Account(models.Model):
@@ -45,6 +48,7 @@ class Transaction(models.Model):
     type = models.CharField(max_length=32, choices=types)
     description = models.CharField(max_length=255, null=True, blank=True)
     title = models.CharField(max_length=32, null=True, blank=True)
+    image = models.ImageField(upload_to='media/transactions', null=True)
 
     class Meta:
         ordering = ['-datetime']
@@ -53,6 +57,8 @@ class Transaction(models.Model):
         return str(self.amount)
 
     def save(self, *args, **kwargs):
+        if self.image and self.image.size > 1024*1024:
+            raise ValidationError("File must be shorter than 1mb.")
         if self.type == 'income':
             self.account.balance += self.amount
             self.category = None
@@ -60,3 +66,24 @@ class Transaction(models.Model):
             self.account.balance -= self.amount
         self.account.save()
         super().save(*args, **kwargs)
+
+@receiver(pre_delete, sender=Transaction)
+def delete_image(sender, instance, **kwargs):
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
+
+@receiver(pre_save, sender=Transaction)
+def delete_old_image(sender, instance, **kwargs):
+    if instance.pk:
+        try:
+            # Retrieve the existing instance from the database
+            old_instance = sender.objects.get(pk=instance.pk)
+            # Check if the image field has changed
+            if old_instance.image != instance.image:
+                # Delete the old image file from the storage
+                if old_instance.image:
+                    if os.path.isfile(old_instance.image.path):
+                        os.remove(old_instance.image.path)
+        except sender.DoesNotExist:
+            pass
