@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.signals import pre_delete, pre_save
+from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 from account.models import CustomUser as User
 import os
@@ -8,6 +9,11 @@ import os
 class Profile(models.Model):
     profile_pic = models.ImageField(upload_to='profile_pics', null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', primary_key=True)
+
+    def save(self, *args, **kwargs) -> None:
+        if self.profile_pic and self.profile_pic.size > 1024*1024:
+            raise ValidationError('File size must be smaller than 1mb.')
+        return super().save(*args, **kwargs)
 
 @receiver(pre_delete, sender=Profile)
 def delete_image(sender, instance, **kwargs):
