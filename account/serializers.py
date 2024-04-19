@@ -1,11 +1,12 @@
 from rest_framework import serializers
+from moneymanager.serializers import CustomModelSerializer
 from .models import CustomUser as User
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(CustomModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     class Meta:
         model = User
-        fields = ['username', 'id', 'email', 'password', 'url']
+        fields = ['username', '_id', 'email', 'password', 'url']
         
 
     def create(self, validated_data):
