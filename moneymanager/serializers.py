@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from django.urls import reverse
 
 class CustomModelSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.SerializerMethodField('get_id')
+    _id = serializers.SerializerMethodField('get_id')
     def create(self, validated_data):
         try:
             return super().create(validated_data)
@@ -18,3 +18,10 @@ class CustomModelSerializer(serializers.HyperlinkedModelSerializer):
     
     def get_id(self, instance):
         return instance.pk
+
+class CustomReadOnlyField(serializers.ReadOnlyField):
+    def to_representation(self, obj):
+        return {
+            "_id": obj.pk,
+            "name": str(obj)
+        }
