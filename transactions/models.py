@@ -59,10 +59,18 @@ class Transaction(models.Model):
     def save(self, *args, **kwargs):
         if self.image and self.image.size > 1024*1024:
             raise ValidationError("File must be shorter than 1mb.")
+        if self.category and self.category.user.id == self.user.id:
+            raise ValidationError("Category not owned by the user.")
+        if self.account.user.id != self.user.id:
+            raise ValidationError("Account not owned by the user.")
+        if self.amount < 0:
+            raise ValidationError("Amount can not be less than zero(0).")
         if self.type == 'income':
             self.account.balance += self.amount
             self.category = None
         elif self.type == 'expense':
+            if not self.category:
+                raise ValidationError("Expenses need a category.")
             self.account.balance -= self.amount
         self.account.save()
         super().save(*args, **kwargs)
