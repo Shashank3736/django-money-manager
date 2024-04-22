@@ -36,7 +36,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path(r'token/', include('knox.urls')),
+    path(r'token/', include('customknox.urls')),
 ]
 
 # serve static files
