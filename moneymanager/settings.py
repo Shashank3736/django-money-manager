@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'transactions',
     'budget',
     'userprofile',
+    'customknox',
 ]
 
 MIDDLEWARE = [
