@@ -33,6 +33,12 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        max_instances = 10
+        if Category.objects.filter(user=self.user).count() >= max_instances:
+            raise ValidationError(f'Cannot create more than {max_instances} instances of {self._meta.model_name}')
+        super().save(*args, **kwargs)
 
 class Transaction(models.Model):
     types = (
