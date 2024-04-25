@@ -33,12 +33,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-    
-    def save(self, *args, **kwargs):
-        max_instances = 10
-        if Category.objects.filter(user=self.user).count() >= max_instances:
-            raise ValidationError(f'Cannot create more than {max_instances} instances of {self._meta.model_name}')
-        super().save(*args, **kwargs)
 
 class Transaction(models.Model):
     types = (
@@ -101,3 +95,11 @@ def delete_old_image(sender, instance, **kwargs):
                         os.remove(old_instance.image.path)
         except sender.DoesNotExist:
             pass
+
+@receiver(pre_save, sender=Account)
+@receiver(pre_save, sender=Category)
+def limit_instances(sender, instance, **kwargs):
+    max_instances = 10
+    
+    if sender.objects.filter(user=instance.user).count() >= max_instances and instance._state.adding:
+        raise ValidationError(f'Cannot create more than {max_instances} instances of {sender.__name__}')
