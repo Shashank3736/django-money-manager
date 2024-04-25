@@ -20,6 +20,8 @@ class Budgets(models.Model):
         return self.name
     
     def save(self, *args, **kwargs) -> None:
+        if self._state.adding and self.category == None and Budgets.objects.filter(user=self.user, category=None).count() > 0:
+            raise ValidationError("Budgest can only have one budget with no category.") 
         if self.category and self.category.user != self.user:
             raise ValidationError("User do not own the category.")
         
