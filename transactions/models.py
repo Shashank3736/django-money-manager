@@ -59,7 +59,7 @@ class Transaction(models.Model):
     def save(self, *args, **kwargs):
         if self.image and self.image.size > 1024*1024:
             raise ValidationError("File must be shorter than 1mb.")
-        if self.category and self.category.user.id == self.user.id:
+        if self.category and self.category.user.id != self.user.id:
             raise ValidationError("Category not owned by the user.")
         if self.account.user.id != self.user.id:
             raise ValidationError("Account not owned by the user.")
