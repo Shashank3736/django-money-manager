@@ -16,29 +16,20 @@ class CategorySerializer(CustomModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
-
-class CustomChoiceField(serializers.ChoiceField):
-    def to_representation(self, obj):
-        return {
-            "_id": obj.pk,
-            "name": str(obj)
-        }
     
 class TransactionSerializer(CustomModelSerializer):
-    category = CustomChoiceField(choices=[], allow_blank=True, allow_null=True)
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.none(), allow_null=True)
     user = CustomReadOnlyField()
-    account = CustomChoiceField(choices=[])
+    account = serializers.PrimaryKeyRelatedField(queryset=Account.objects.none())
     datetime = serializers.DateTimeField(default=timezone.now())
 
     class Meta:
         model = Transaction
         fields = '__all__'
-        
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         request = self.context.get('request')
         if request and request.user:
-            self.fields['category'].choices = Category.objects.filter(user=request.user).values_list('id', 'name')
-            self.fields['account'].choices = Account.objects.filter(user=request.user).values_list('id', 'name')
-    
-        
+            self.fields['account'].queryset = Account.objects.filter(user=request.user)
+            self.fields['category'].queryset = Category.objects.filter(user=request.user)
