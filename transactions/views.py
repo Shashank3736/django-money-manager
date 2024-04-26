@@ -39,6 +39,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def by_date(self, request):
         date = request.query_params.get('date', None)
+        start = int(request.query_params.get('start', '0'))
+        end = int(request.query_params.get('end', '10'))
         if date:
             try:
                 date = timezone.datetime.strptime(date, '%Y-%m-%d')
@@ -48,14 +50,22 @@ class TransactionViewSet(viewsets.ModelViewSet):
             date = timezone.now()
 
         queryset = Transaction.objects.filter(user=self.request.user, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        serializer = self.get_serializer(queryset[start:end], many=True)
+        return Response({
+            "count": queryset.count(),
+            "results": serializer.data,
+        })
 
     @action(detail=False, methods=['get'])
     def by_month(self, request):
         month = request.query_params.get('month', timezone.now().month)
         year = request.query_params.get('year', timezone.now().year)
+        start = int(request.query_params.get('start', '0'))
+        end = int(request.query_params.get('end', '10'))
 
         queryset = Transaction.objects.filter(user=self.request.user, datetime__year=year, datetime__month=month)
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        serializer = self.get_serializer(queryset[start:end], many=True)
+        return Response({
+            "count": queryset.count(),
+            "results": serializer.data,
+        })
