@@ -37,7 +37,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
     
     @action(detail=False, methods=['get'])
-    def by_date(self, request):
+    def date(self, request):
         date = request.query_params.get('date', None)
         start = int(request.query_params.get('start', '0'))
         end = int(request.query_params.get('end', '10'))
@@ -53,11 +53,13 @@ class TransactionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset[start:end], many=True)
         return Response({
             "count": queryset.count(),
+            "start": start,
+            "end": end,
             "results": serializer.data,
         })
 
     @action(detail=False, methods=['get'])
-    def by_month(self, request):
+    def month(self, request):
         month = request.query_params.get('month', timezone.now().month)
         year = request.query_params.get('year', timezone.now().year)
         start = int(request.query_params.get('start', '0'))
