@@ -2,13 +2,13 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.urls import reverse
 
-class CustomModelSerializer(serializers.HyperlinkedModelSerializer):
+class CustomModelSerializer(serializers.ModelSerializer):
     _id = serializers.SerializerMethodField('get_id')
     def create(self, validated_data):
         try:
             return super().create(validated_data)
         except Exception as e:
-            raise ValidationError(*list(e))
+            raise ValidationError(e)
     
     def update(self, instance, validated_data):
         try:
