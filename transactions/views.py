@@ -50,3 +50,12 @@ class TransactionViewSet(viewsets.ModelViewSet):
         queryset = Transaction.objects.filter(user=self.request.user, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def by_month(self, request):
+        month = request.query_params.get('month', timezone.now().month)
+        year = request.query_params.get('year', timezone.now().year)
+
+        queryset = Transaction.objects.filter(user=self.request.user, datetime__year=year, datetime__month=month)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
