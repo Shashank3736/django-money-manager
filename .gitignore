@@ -15,3 +15,6 @@ venv/
 
 # Database
 db.sqlite3
+
+# Batch file
+*.bat
