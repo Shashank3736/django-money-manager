@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from .serializers import TransactionSerializer, AccountSerializer, CategorySerializer
 from django.utils import timezone
 from .models import Transaction#, Account, Category
@@ -60,14 +61,20 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def month(self, request):
-        month = request.query_params.get('month', timezone.now().month)
-        year = request.query_params.get('year', timezone.now().year)
-        start = int(request.query_params.get('start', '0'))
-        end = int(request.query_params.get('end', '10'))
+        try:
+            month = int(request.query_params.get('month', timezone.now().month))
+            year = int(request.query_params.get('year', timezone.now().year))
+            start = int(request.query_params.get('start', 0))
+            end = int(request.query_params.get('end', 10))
 
-        queryset = Transaction.objects.filter(user=self.request.user, datetime__year=year, datetime__month=month)
-        serializer = self.get_serializer(queryset[start:end], many=True)
-        return Response({
-            "count": queryset.count(),
-            "results": serializer.data,
-        })
+            if month > 12 or month < 0:
+                raise ParseError("Value of month should be between 1 to 12")
+
+            queryset = Transaction.objects.filter(user=self.request.user, datetime__year=year, datetime__month=month)
+            serializer = self.get_serializer(queryset[start:end], many=True)
+            return Response({
+                "count": queryset.count(),
+                "results": serializer.data,
+            })
+        except ValueError as e:
+            raise ParseError(e)
